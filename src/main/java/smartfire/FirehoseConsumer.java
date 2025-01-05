@@ -37,11 +37,12 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.WebSocket;
 import java.time.Instant;
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -92,10 +93,9 @@ public class FirehoseConsumer {
         }
     }
 
-    private List<Message> liveMessages(int numberOfMessages, String lang, Predicate<Message> filter, Consumer<Message> consumer) {
+    private List<Message> liveMessages(int numberOfMessages, String lang) {
         int maxNumberOfMessages = numberOfMessages > 0 ? numberOfMessages : MINIMUM_POINTS_PER_CLUSTER;
         String language = lang == null ? "en" : lang;
-        Predicate<Message> appliedFilter = filter == null ? (s) -> true : filter;
 
         List<Message> messages = new ArrayList<>();
         AtomicInteger counter = new AtomicInteger();
@@ -112,9 +112,7 @@ public class FirehoseConsumer {
                                 .thenAccept(text -> {
                                     if (counter.get() % 1000 == 0) System.out.format("Received %d messages%n", counter.get());
                                     Message message = GSON.fromJson(String.valueOf(text), Message.class);
-                                    if (message.commit().record().langs().contains(language) &&
-                                        appliedFilter.test(message)) {
-                                        if (consumer != null) consumer.accept(message);
+                                    if (message.commit().record().langs().contains(language)) {
                                         if (!message.commit().record().text().isBlank()) {
                                             messages.add(message);
                                             if (counter.incrementAndGet() >= maxNumberOfMessages) {
@@ -139,7 +137,7 @@ public class FirehoseConsumer {
         // Collections messages from the Bluesky Firehose
 
         List<Message> allMessages = new FirehoseConsumer()
-            .liveMessages(NUMBER_OF_MESSAGES, "en", null, null);
+            .liveMessages(NUMBER_OF_MESSAGES, "en");
 
         Instant consummedInstant = Instant.now();
         System.out.format("Consummed %d messages in: %dms%n", allMessages.size(),
