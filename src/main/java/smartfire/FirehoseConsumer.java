@@ -254,7 +254,7 @@ public class FirehoseConsumer {
             const data = {
               name: "Bluesky topic clusters",
               children: [
-                %s\
+                %s
               ]
             };
             """, dataTemplate.toString().trim());

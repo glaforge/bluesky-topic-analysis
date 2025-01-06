@@ -1,14 +1,19 @@
 const data = {
   name: "Bluesky topic clusters",
   children: [
-    {name: "Sunday greetings and good mornings ", value: 49},
-    {name: "Work, finance,  social issues,  personal life ", value: 292},
-    {name: "Viral music videos and songs ", value: 45},
-    {name: "Fictional rescue scenarios ", value: 27},
-    {name: "Birthday wishes ", value: 13},
-    {name: "Gratitude and appreciation ", value: 64},
-    {name: "Gaza child's medical fundraiser ", value: 13},
-    {name: "Gay male pornography and masturbation ", value: 13},
-    {name: "Overwhelming positive agreement. ", value: 17},
-    {name: "Overwhelming positive reaction to something cute. ", value: 13},  ]
+    {name: "Sequential numbered social media IDs. ", value: 223},
+    {name: "Stock market data: price, volume, credit. ", value: 181},
+    {name: "Gratitude and appreciation. ", value: 46},
+    {name: "Politics, social commentary, daily life ", value: 276},
+    {name: "Taylor Swift's Eras Tour ", value: 43},
+    {name: "Campaign fundraising requests ", value: 32},
+    {name: "Family fundraising appeal ", value: 11},
+    {name: "Wordle game scores ", value: 30},
+    {name: "2024 election results; alleged irregularities. ", value: 12},
+    {name: "International news and business updates ", value: 12},
+    {name: "Morning greetings and well wishes. ", value: 44},
+    {name: "Need insulin, seeking donations ", value: 21},
+    {name: "Overwhelmingly positive responses. ", value: 11},
+    {name: "Seeking submissive partners. ", value: 12},
+  ]
 };
