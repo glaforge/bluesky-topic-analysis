@@ -75,8 +75,10 @@ const colorScale = d3.scaleQuantize()
 
 // Add a filled or stroked circle.
 node.append("circle")
-    .attr("fill", d => d.children == null ? colorScale(d.r) : "#fefef0")
-    .attr("stroke", d => d.children == null ? d3.color(colorScale(d.r)).darker(0.2) : "#fff")
+    .attr("fill", d =>  d.children == null ?
+        createRadialGradient(colorScale(d.r)) : "#fefef0") // Use the gradient
+    .attr("stroke", d => d.children == null ?
+        d3.color(colorScale(d.r)).darker(0.2) : "#fff")
     .attr("r", d => d.r);
 
 node.filter(d => !d.children) // consider leaf nodes and non-leaf nodes as well now
@@ -87,7 +89,7 @@ node.filter(d => !d.children) // consider leaf nodes and non-leaf nodes as well 
     .attr("height", d => 2 * d.r)
     .append("xhtml:div")
     .classed("foreignDiv", true)
-    .style("font-size", d => d.r / 5.3 + "px") // Dynamic font sizing
+    .style("font-size", d => d.r / 4.3 + "px") // Dynamic font sizing
     .html(d =>
         "<span style='font-size: " + (d.r / 2.5) + "px; color: " + d3.color(colorScale(d.r)).darker(1) + ";'>"
         + format(d.value)
@@ -97,3 +99,23 @@ node.filter(d => !d.children) // consider leaf nodes and non-leaf nodes as well 
     );
 
 d3.select("#chart").node().appendChild(svg.node());
+
+// Generate a radial gradient
+function createRadialGradient(color) {
+        const gradient = svg.append("defs")
+            .append("radialGradient")
+            .attr("id", (d) => "gradient-" + color.slice(1)) // Unique ID based on color
+            .attr("cx", "50%") // Center of the gradient
+            .attr("cy", "50%")
+            .attr("r", "50%"); // Radius of the gradient
+
+        gradient.append("stop")
+            .attr("offset", "0%") // Start of the gradient (center)
+            .attr("stop-color", d3.color(color).brighter(0.5)); // Slightly lighter color at the center
+
+        gradient.append("stop")
+            .attr("offset", "100%") // End of the gradient (edge)
+            .attr("stop-color", color); // Original color at the edge
+
+        return "url(#gradient-" + color.slice(1) + ")";
+}

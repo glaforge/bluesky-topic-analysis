@@ -49,17 +49,24 @@ import java.util.stream.IntStream;
 public class FirehoseConsumer {
 
     public static final int MAX_BATCH_SIZE = 250;
-    public static final int NUMBER_OF_MESSAGES = 10_000;
     public static final int EMBEDDING_OUTPUT_DIMENSION = 128;
+
     public static final int MINIMUM_POINTS_PER_CLUSTER = 10;
     public static final double MAXIMUM_NEIGHBORHOOD_RADIUS = 0.2;
+
+    public static final int NUMBER_OF_MESSAGES = 10_000;
+    public static final String LANG = "en";
+
+    public static final String EMBEDDING_MODEL = "text-embedding-005";
+//    public static final String EMBEDDING_MODEL = "text-multilingual-embedding-002";
+    public static final String CHAT_MODEL = "gemini-1.5-flash-002";
+//    public static final String CHAT_MODEL = "gemini-2.0-flash-exp";
 
     private static final EmbeddingModel embeddingModel = VertexAiEmbeddingModel.builder()
         .project(System.getenv("GCP_PROJECT_ID"))
         .location(System.getenv("GCP_LOCATION"))
         .endpoint(System.getenv("GCP_VERTEXAI_ENDPOINT"))
-        .modelName("text-embedding-005")
-//        .modelName("text-multilingual-embedding-002")
+        .modelName(EMBEDDING_MODEL)
         .outputDimensionality(EMBEDDING_OUTPUT_DIMENSION)
         .publisher("google")
         .build();
@@ -67,8 +74,7 @@ public class FirehoseConsumer {
     private static final ChatLanguageModel chatModel = VertexAiGeminiChatModel.builder()
         .project(System.getenv("GCP_PROJECT_ID"))
         .location(System.getenv("GCP_LOCATION"))
-//        .modelName("gemini-2.0-flash-exp")
-        .modelName("gemini-1.5-flash-002")
+        .modelName(CHAT_MODEL)
         .maxOutputTokens(25)
         .build();
 
@@ -95,7 +101,7 @@ public class FirehoseConsumer {
 
     private List<Message> liveMessages(int numberOfMessages, String lang) {
         int maxNumberOfMessages = numberOfMessages > 0 ? numberOfMessages : MINIMUM_POINTS_PER_CLUSTER;
-        String language = lang == null ? "en" : lang;
+        String language = lang == null ? LANG : lang;
 
         List<Message> messages = new ArrayList<>();
         AtomicInteger counter = new AtomicInteger();
@@ -140,7 +146,7 @@ public class FirehoseConsumer {
             .liveMessages(NUMBER_OF_MESSAGES, "en");
 
         Instant consummedInstant = Instant.now();
-        System.out.format("Consummed %d messages in: %dms%n", allMessages.size(),
+        System.out.format("Consumed %d messages in: %dms%n", allMessages.size(),
             consummedInstant.toEpochMilli() - start.toEpochMilli());
 
         // ------------------
