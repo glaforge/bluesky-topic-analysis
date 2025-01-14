@@ -78,13 +78,22 @@ public class FirehoseConsumer {
         .maxOutputTokens(25)
         .build();
 
-    public record Message(Commit commit, String did) {
-        record Commit(Record record, String cid) {
+    public record Message(
+        Commit commit,
+        String did) {
+        record Commit(
+            Record record,
+            String cid,
+            String rkey) {
             record Record(
                 String text,
                 List<String> langs,
                 Date createdAt) {
             }
+        }
+
+        public String url() {
+            return String.format("https://bsky.app/profile/%s/post/%s", did, commit.rkey);
         }
     }
 
@@ -118,14 +127,14 @@ public class FirehoseConsumer {
                                 .thenAccept(text -> {
                                     if (counter.get() % 1000 == 0) System.out.format("Received %d messages%n", counter.get());
                                     Message message = GSON.fromJson(String.valueOf(text), Message.class);
-                                    if (message.commit().record().langs().contains(language)) {
-                                        if (!message.commit().record().text().isBlank()) {
+                                    if (message.commit().record().langs().contains(language) &&
+                                        !message.commit().record().text().isBlank()) {
                                             messages.add(message);
                                             if (counter.incrementAndGet() >= maxNumberOfMessages) {
                                                 webSocket.abort();
                                             }
                                         }
-                                    }
+
                                 });
                         }
                     })
@@ -223,6 +232,8 @@ public class FirehoseConsumer {
                     Don't give a full sentence saying the social messages are about a topic,
                     just give the topic directly in 10 words or less,
                     without mentioning the messages are social media posts or reactions.
+                    If the messages are only emojis, say it's a mix of emojis.
+                    If the messages are just links to social media apps, say it's a various social media links without text.
                     """),
                 UserMessage.from(appendedMessages)
             );
@@ -250,8 +261,8 @@ public class FirehoseConsumer {
             System.out.println("--- Messages: ");
             System.out.println(points.stream()
                 .map(clusteredMsg ->
-                    clusteredMsg.message.commit().cid() + " --> " +
-                        clusteredMsg.message.commit().record().text()
+                    clusteredMsg.message().url() + " --> \n" +
+                        clusteredMsg.message().commit().record().text()
                 )
                 .collect(Collectors.joining("\n")));
         }
