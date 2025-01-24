@@ -84,14 +84,14 @@ node.append("circle")
 node.filter(d => !d.children) // consider leaf nodes and non-leaf nodes as well now
     .append("foreignObject")
     .attr("x", d => -0.8 * d.r) // center horizontally
-    .attr("y", d => -1.1*d.r) // center vertically, manually adjusted
+    .attr("y", d => -1*d.r) // center vertically, manually adjusted
     .attr("width", d => 1.6 * d.r)
-    .attr("height", d => 2 * d.r)
+    .attr("height", d => 1.8 * d.r)
     .append("xhtml:div")
     .classed("foreignDiv", true)
-    .style("font-size", d => d.r / 4.3 + "px") // Dynamic font sizing
+    .style("font-size", d => d.r / 4.5 + "px") // Dynamic font sizing
     .html(d =>
-        "<span style='font-size: " + (d.r / 2.5) + "px; color: " + d3.color(colorScale(d.r)).darker(1) + ";'>"
+        "<span style='font-size: " + (d.r / 2.4) + "px; color: " + d3.color(colorScale(d.r)).darker(1) + ";'>"
         + format(d.value)
         + "</span>"
         + d.data.name
