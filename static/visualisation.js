@@ -89,7 +89,7 @@ node.filter(d => !d.children) // consider leaf nodes and non-leaf nodes as well 
     .attr("height", d => 1.8 * d.r)
     .append("xhtml:div")
     .classed("foreignDiv", true)
-    .style("font-size", d => d.r / 4.5 + "px") // Dynamic font sizing
+    .style("font-size", d => d.r / 4.8 + "px") // Dynamic font sizing
     .html(d =>
         "<span style='font-size: " + (d.r / 2.4) + "px; color: " + d3.color(colorScale(d.r)).darker(1) + ";'>"
         + format(d.value)
